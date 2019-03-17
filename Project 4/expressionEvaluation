@@ -1,0 +1,62 @@
+import java.util.*;
+
+public class Project4 {
+
+    public static void main(String[] args) {
+       StackChar operators = new StackChar();
+       StackInt values = new StackInt();
+       Scanner stdin = new Scanner(System.in);
+       
+       String expression;
+       char thisOp, nowOp;
+       int answer;
+       answer = 0;
+       
+       System.out.print("Enter an expession: ");
+       expression = stdin.nextLine();
+       
+       char[] token = String.valueOf(expression).toCharArray();
+       
+        for (int i = 0; i<token.length; i++) {
+           if (token[i] == ' ') {
+               continue;
+            }   
+           if (Character.isDigit(token[i])) {
+               values.push(Character.getNumericValue(token[i]));
+            }else if (token[i] == '+' || token[i] == '-' || token[i] == '*') {
+               thisOp = token[i];
+               if (!operators.isEmpty()) {
+                   if (hasPriority(thisOp, operators.peek())) { 
+                       operators.push(thisOp);
+                   } else {
+                       answer = values.pushR(solveExp(operators.pop(), values.pop(), values.pop()));
+                       //values.push(answer);
+                       operators.push(thisOp);
+                   }
+               } else 
+                   operators.push(thisOp);
+                
+            }
+        }   
+        
+        while (!operators.isEmpty()) {
+            answer = values.pushR(solveExp(operators.pop(), values.pop(), values.pop()));
+        }
+       
+        System.out.println(answer);
+    }
+    public static boolean hasPriority(char thisO, char high) {
+        if (thisO == '*') {
+            return true;
+        } else return high != '*';
+    }
+    
+    public static int solveExp(char op, int y, int x) {
+        switch(op) {
+            case '*':   return x * y;
+            case '+':   return x + y;
+            case '-':   return x - y;
+        }
+        return Integer.MAX_VALUE;
+    }
+}
