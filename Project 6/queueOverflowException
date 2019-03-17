@@ -1,0 +1,10 @@
+public class QueueOverflowException extends Exception {
+
+    public QueueOverflowException() {
+    }
+
+    public QueueOverflowException(String string) {
+        super(string);
+    }
+    
+}
