@@ -1,0 +1,25 @@
+package project.pkg4;
+import java.util.*;
+
+public class ProgramA {
+    public static void main(String[] args) {
+        Stack<String> words = new Stack<>();
+        Scanner stdin =  new Scanner(System.in);
+        String SENTINEL, input;
+        SENTINEL = "DONE";
+        
+        System.out.print("Enter a series of words or DONE to terminate:\n");
+        
+        input = stdin.next();
+        while(!input.equals(SENTINEL)) {
+            if (!input.equals(SENTINEL)) {
+               words.push(input);
+               input = stdin.next();
+            }   
+        }
+        System.out.println();
+        while (!words.isEmpty()) { 
+            System.out.print(words.pop()+ "\n");
+        }
+    }
+}
