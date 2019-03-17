@@ -1,0 +1,38 @@
+public class Customer {
+    
+    int arrTime, finishTime, serviceTime, waitTime;
+    
+    public Customer() {
+        arrTime = 0;
+        finishTime = 0;
+    }
+    
+    public Customer(int arrTime, int serviceTime) {
+        this.arrTime = arrTime;
+        this.serviceTime = serviceTime;
+    }
+    
+    public int getArrivalTime() {
+        return arrTime;
+    }
+    
+    public int getServiceTime() {
+        return serviceTime;
+    }
+    
+    public void setFinishTime(int time) {
+        finishTime = time;
+    }
+    
+    public int getFinishTime() {
+        return finishTime;
+    }   
+    
+    public void setWaitTime(int wait) {
+       waitTime = wait;
+    }
+    
+    public int getWaitTime() {
+        return waitTime;
+    }
+}
