@@ -1,0 +1,118 @@
+
+import java.util.Scanner;
+
+public class CarWash {
+
+    public final static int NUM_CARS = 8;
+    static Queue carQueue = new Queue(NUM_CARS);
+    static int arrivalTime, arrTimeInterval, serviceTime, hours, minutes, 
+            shiftTime, carWait, cars, finishedCars;
+
+    public static void main(String[] args) throws QueueOverflowException,
+            QueueUnderflowException {
+        Scanner stdin = new Scanner(System.in);
+        String more;
+        System.out.print("Enter the number of hours for the shift: ");
+        hours = stdin.nextInt();
+        System.out.print("Enter the number of minutes for the shift: ");
+        minutes = stdin.nextInt();
+        System.out.print("Enter the number of customers waiting: ");
+        carWait = stdin.nextInt();
+
+        Simulation solve = new Simulation();
+
+        do {
+            solve.genArrivalTime();
+            solve.genServiceTime();
+            solve.getTotalShiftTime();
+
+            solve.doSimulation();
+        } while (shiftTime < 0);
+        System.out.println("Program completed");
+    }
+
+    public static class Simulation {
+
+        int cars = 0;
+        int finishedCars = 0;
+
+        public int genArrivalTime() {
+            arrivalTime = 1 + (int) (Math.random() * ((5 - 1) + 1));
+            return arrivalTime;
+        }
+
+        public int genServiceTime() {
+            serviceTime = 2 + (int) (Math.random() * ((5 - 2) + 2));
+            return serviceTime;
+        }
+
+        public int getTotalShiftTime() {
+            shiftTime = (hours * 60) + minutes;
+            return shiftTime;
+        }
+
+        public void doSimulation() throws QueueOverflowException, 
+                QueueUnderflowException {
+            Customer currentCust = null;
+            int arrivalTime;
+            int bypassed;
+            int idleTime = 0;
+            int longestWait = 0;
+            int sumWait = 0;
+            bypassed = 0;
+            arrivalTime = 1;
+
+            if (carWait < NUM_CARS) {
+                for (int j = 0; j < carWait; j++) {
+                    Customer newCust = new Customer(0, genServiceTime());
+                    carQueue.enqueue(newCust);
+                }
+            }
+
+            for (int i = 1; i <= shiftTime; i++) {
+                // If a new customer has arrived
+                if (i == arrivalTime) {
+                    cars++;
+                    //adds to the queue if its not full and counts the
+                    //bypassed cars
+                    if (!carQueue.isFull()) {
+                        Customer newCust = new Customer(arrivalTime, 
+                                genServiceTime());
+                        carQueue.enqueue(newCust);
+                    } else {
+                        bypassed++;
+                    }
+                    arrivalTime = i + genArrivalTime();
+                }
+
+                // If the current customer is finished
+                if (currentCust != null) {
+                    if (i == currentCust.getFinishTime()) {
+                        currentCust = null;
+                        finishedCars++;
+                    }
+                }
+
+                if (currentCust == null) {
+                    if (!carQueue.isEmpty()) {
+                        currentCust = carQueue.dequeue();
+                        currentCust.setFinishTime(i + 
+                                currentCust.getServiceTime());
+                        int wait = i - currentCust.getArrivalTime();
+                        if (wait > longestWait) {
+                            longestWait = wait;
+                        }
+                        sumWait += wait;
+                    } else {
+                        idleTime++;
+                    }
+                }
+            }
+            System.out.println("number of cars served: " + cars);
+            System.out.println("cars bypassed " + bypassed);
+            System.out.println("Average wait time:" + sumWait / finishedCars);
+            System.out.println("Total idle time:" + idleTime);
+            System.out.println("Longest wait: " + longestWait);
+        }
+    }
+}
