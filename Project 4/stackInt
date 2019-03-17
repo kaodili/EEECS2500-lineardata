@@ -1,0 +1,42 @@
+public class StackInt {
+    Integer[] intArr;
+    int count;
+    
+    public StackInt() {
+        intArr = new Integer[100];
+        count = 0;
+    }
+    
+    public boolean isEmpty() {
+        return count == 0;
+    }
+    
+    public int peek() {
+        return intArr[count - 1];
+    }
+    
+    public int pop() {
+        int me;
+        me = intArr[count - 1];
+        intArr[count - 1] = null;
+        count--;
+        return me;
+    }
+    
+    public void push(int c) {
+        intArr[count] = c;
+        count++;
+    }
+    
+    public int pushR(int c) {
+        intArr[count] = c;
+        count++;
+        return c;
+    }
+    
+    public void push(char c) {
+        intArr[count] = Integer.parseInt(Character.toString(c));
+        count++;
+    }
+
+}
