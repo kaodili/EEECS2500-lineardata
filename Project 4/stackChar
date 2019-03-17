@@ -1,0 +1,36 @@
+public class StackChar {
+    Character[] charArr;
+    int count;
+    
+    public StackChar() {
+        charArr = new Character[100];
+        count = 0;
+    }
+    
+    public boolean isEmpty() {
+        return count == 0;
+    }
+    
+    public char peek() {
+        return charArr[count - 1];
+    }
+    
+    public char pop() {
+        char me;
+        me = charArr[count - 1];
+        charArr[count - 1] = null;
+        count--;
+        return me;
+    }
+    
+    public void push(char c) {
+        charArr[count] = c;
+        count++;
+    }
+    
+    public void push(int c) {
+        charArr[count] = (char) c;
+        count++;
+    }
+
+}
