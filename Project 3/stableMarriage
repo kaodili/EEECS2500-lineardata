@@ -1,0 +1,140 @@
+package project3f;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.Scanner;
+
+public class Project3f {
+    
+    static LinkedList<String> namesOfMen = new LinkedList<>();
+    static LinkedList<String> menPrefList = new LinkedList<>();
+    static LinkedList<String> freeMan = new LinkedList<>();
+    static LinkedList<String> namesOfWomen = new LinkedList<>();
+    static LinkedList<String> freeWoman = new LinkedList<>();
+    static LinkedList<String> womenPrefList = new LinkedList<>();
+    static String inputFile;
+    
+    public static void main(String[] args) throws FileNotFoundException, IOException {
+        Scanner stdin = new Scanner (System.in);
+        String line = null;
+        
+        System.out.println("What is the name of the file? ");
+        inputFile = stdin.nextLine();
+       
+        BufferedReader Buff = new BufferedReader(new FileReader(inputFile));
+       
+        System.out.println();
+        try {
+            while (((line = Buff.readLine()) != null)) {
+            System.out.println(line);
+            } 
+        }
+        finally {
+            Buff.close();
+        }    
+        readFile("stable matching.txt");
+        System.out.println(Arrays.toString(freeMan.toArray()));
+        System.out.println(Arrays.toString(freeWoman.toArray()));
+        MenProposal();
+        WomenProposal();
+    }
+    
+    public static void readFile(String FileName) throws FileNotFoundException {     
+        File newFile = new File (inputFile);
+        Scanner stdin = new Scanner(newFile);
+       
+        int listSize = 5;
+        int count = 1;
+        while (stdin.hasNextLine()) { 
+            
+            String line = stdin.nextLine();
+            String[] array = line.split(": ");
+            if (count <= listSize) {
+                namesOfMen.add(array[0]);   
+                freeMan.add(array[0]);  
+                menPrefList.add(array[1]);
+            } else if (count > listSize){
+                namesOfWomen.add(array[0]);
+                freeWoman.add(array[0]);
+                womenPrefList.add(array[1]);      
+            }
+            count++;
+        }
+    }
+    
+    public static void MenProposal() {
+        LinkedList<String> marriedMen = new LinkedList<>();
+        LinkedList<String> female = new LinkedList<>();
+        while (!freeMan.isEmpty()) {
+            String currentMale =  freeMan.remove();
+            LinkedList<String> currentMalePref = new LinkedList<>();
+            currentMalePref.addAll(Arrays.asList(menPrefList.get(namesOfMen.indexOf(currentMale)).split(" ")));
+            for (String woman : currentMalePref) {
+                if (female.indexOf(woman) == -1) {
+                    marriedMen.add(currentMale);
+                    female.add(woman);
+                    break;
+                }   else if (female.indexOf(woman) >= 0) {
+                    String previousMan = marriedMen.get(female.indexOf(woman));
+                    LinkedList<String> currentWoman = new LinkedList<>();
+                    currentWoman.addAll(Arrays.asList(womenPrefList.get(freeWoman.indexOf(woman)).split(" ")));
+                    if (currentWoman.indexOf(currentMale) < currentWoman.indexOf(previousMan)) {
+                        marriedMen.remove(marriedMen.indexOf(previousMan));
+                        female.remove(female.indexOf(woman));
+                        marriedMen.add(currentMale);
+                        female.add(woman);
+                        freeMan.add(previousMan);
+                        break;
+                    }   else {   
+                    }
+                }
+            }
+            
+        }
+        System.out.println("Marriages");
+        for (int i = 0; i < marriedMen.size(); i++) {
+        System.out.println("("+marriedMen.get(i)+ " , " +female.get(i)+")");
+        }    
+    }
+    
+    public static void WomenProposal() {
+        LinkedList<String> marriedMen = new LinkedList<>();
+        LinkedList<String> female = new LinkedList<>();
+        while (!freeWoman.isEmpty()) {
+            String currentFemale =  freeWoman.remove();
+            LinkedList<String> currentFemalePref = new LinkedList<>();
+            currentFemalePref.addAll(Arrays.asList(womenPrefList.get(namesOfWomen.indexOf(currentFemale)).split(" ")));
+            for (String man : currentFemalePref) {
+                if (marriedMen.indexOf(man) == -1) {
+                    female.add(currentFemale);
+                    marriedMen.add(man);
+                    break;
+                }   else if (marriedMen.indexOf(man) >= 6) {
+                    String previousFemale = female.get(marriedMen.indexOf(man));
+                    LinkedList<String> currentMan = new LinkedList<>();
+                    currentMan.addAll(Arrays.asList(menPrefList.get(freeMan.indexOf(man)).split(" ")));
+                    if (currentMan.indexOf(currentFemale) < currentMan.indexOf(previousFemale)) {
+                        female.remove(female.indexOf(previousFemale));
+                        marriedMen.remove(female.indexOf(man));
+                        female.add(currentFemale);
+                        marriedMen.add(man);
+                        freeWoman.add(previousFemale);
+                        break;
+                    }   else {   
+                    }
+                }
+            }
+            
+        }
+        System.out.println("Marriages");
+        for (int i = 0; i < female.size(); i++) {
+        System.out.println("("+female.get(i)+ " , " +marriedMen.get(i)+")");
+        }    
+    }
+    
+}
